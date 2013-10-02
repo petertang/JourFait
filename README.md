@@ -1,4 +1,4 @@
-Play framework 2 application on OpenShift Express
+Play framework 2.2 application on OpenShift Express
 ============================
 
 This git repository will help you get up and running quickly with a Play framework 2 application
@@ -7,12 +7,12 @@ on OpenShift Express taking advantage of the do-it-yourself cartridge.
 Running on OpenShift
 --------------------
 
-Create a new Play framework 2 application
+Create a new Play framework 2.2 or greater application
 
     play new play2demo
     cd play2demo
-
     git init
+
 
 Register at http://openshift.redhat.com/, and then create a diy (do-it-yourself) application:
 
@@ -22,32 +22,32 @@ You will see something like the following:
 
 
 ```bash
-Creating application 'play2demo'
-=========================
+Application Options
+-------------------
+  Namespace:  yourdomain
+  Cartridges: diy-0.1
+  Gear Size:  default
+  Scaling:    no
 
-  Namespace: yourdomain
-  Gear Size: default
-  Scaling:   no
-  Cartridge: diy-0.1
+Creating application 'play2demo' ... done
 
-Your application's domain name is being propagated worldwide (this might take a minute)...
-play2demo @ http://play2demo-yourdomain.rhcloud.com/
-=================================
-  Application Info
-  ================
-    Gear Size = small
-    Git URL   = ssh://your_uuid@play2demo-yourdomain.rhcloud.com/~/git/play2demo.git/
-    SSH URL   = ssh://your_uuid@play2demo-yourdomain.rhcloud.com
-    UUID      = your_uuid
-    Created   = 6:06 PM
-  Cartridges
-  ==========
-    diy-0.1
+Waiting for your DNS name to be available ... done
+
+play2demo @ http://play2demo-yourdomain.rhcloud.com/ (uuid: your_uuid)
+-------------------------------------------------------------------------------
+  Created: 3:28 PM
+  Gears:   1 (defaults to small)
+  Git URL: ssh://your_uuid@play2demo-yourdomain.rhcloud.com/~/git/play2demo.git/
+  SSH:     your_uuid@play2demo-yourdomain.rhcloud.com
+
+  diy-0.1 (Do-It-Yourself 0.1)
+  ----------------------------
+    Gears: 1 small
 
 RESULT:
 Application play2demo was created.
-Disclaimer: This is an experimental cartridge that provides a way to try unsupported languages,
-frameworks, and middleware on Openshift.
+Disclaimer: This is an experimental cartridge that provides a way to try unsupported languages, frameworks, and middleware on
+Openshift.
 ```
 
 Copy and paste the git url to add it as a remote repo (replace the uuid part with your own!)
@@ -59,7 +59,7 @@ Copy and paste the git url to add it as a remote repo (replace the uuid part wit
 
 And then add this repository as a remote repo named quickstart:
 
-    git remote add quickstart -m master git://github.com/opensas/play2-openshift-quickstart.git
+    git remote add quickstart -m master git://github.com/JamesSullivan/play2.2-openshift-quickstart.git
     git pull -s recursive -X theirs quickstart master
 
 Then use the stage task to prepare your deployment
@@ -300,6 +300,8 @@ Play will then run your app in production mode. The server will listen to ${OPEN
 
 Acknowledgments
 ----------------------------
+
+Minor updates to work by Opensas.
 
 I couldn't have developed this quickstart without the help of [marekjelen](https://github.com/marekjelen) who answered [my questions on stackoverflow](http://stackoverflow.com/questions/9446275/best-approach-to-integrate-netty-with-openshift) and who also shared his [JRuby quickstart repo](https://github.com/marekjelen/openshift-jruby#readme). (I know, open source rocks!)
 
