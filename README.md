@@ -59,7 +59,7 @@ Copy and paste the git url to add it as a remote repo (replace the uuid part wit
 
 And then add this repository as a remote repo named quickstart:
 
-    git remote add quickstart -m master git://github.com/opensas/play2-openshift-quickstart.git
+    git remote add quickstart -m master git://github.com/JamesSullivan/play2-openshift-quickstart.git
     git pull -s recursive -X theirs quickstart master
 
 Then use the stage task to prepare your deployment
