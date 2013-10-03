@@ -19,7 +19,6 @@ then
 else
    echo "Play 2.2 or later version"
 fi
-echo "${APP_PATH} $PLAY_PARAMS "
 
 chmod +x ${APP_PATH}
 
@@ -27,6 +26,7 @@ APP_COMMAND="${APP_PATH} $PLAY_PARAMS "\
 "-Dhttp.port=${OPENSHIFT_DIY_PORT} "\
 "-Dhttp.address=${OPENSHIFT_DIY_IP} "\
 "-Dconfig.resource=openshift.conf"
+echo "${APP_COMMAND}"
 
 echo $APP_COMMAND &>> $LOG_FILE
 nohup bash -c "${APP_COMMAND} &>> ${LOG_FILE} 2>&1" &> /dev/null &
