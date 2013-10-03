@@ -10,7 +10,7 @@ if [[ ! $? -eq 0 ]]; then
 fi
 
 LOG_FILE="${OPENSHIFT_DIY_LOG_DIR}play.log"
-APP_PATH="${OPENSHIFT_REPO_DIR}/target/universal/stage/bin/${OPENSHIFT_APP_NAME}"
+APP_PATH="${OPENSHIFT_REPO_DIR}target/universal/stage/bin/${OPENSHIFT_APP_NAME}"
 
 if [ -f "${OPENSHIFT_REPO_DIR}target/start" ];
 then
