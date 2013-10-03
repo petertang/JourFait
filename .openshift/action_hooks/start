@@ -19,7 +19,7 @@ then
 else
    echo "Play 2.2 or later version"
 fi
-echo APP_PATH
+echo "${APP_PATH} $PLAY_PARAMS "
 
 chmod +x ${APP_PATH}
 
