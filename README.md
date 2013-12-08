@@ -1,8 +1,7 @@
 Play framework 2 application on OpenShift Express
 ============================
 
-This a copied and Updated version of https://github.com/opensas/play2-openshift-quickstart
-(waiting on a pull request)
+This a copied and Updated version of https://github.com/opensas/play2-openshift-quickstart that supports Play Framework 2.2 (which the original does not) as well as earlier versions.
 
 This git repository  will help you get up and running quickly with a Play framework 2 application
 on OpenShift Express taking advantage of the do-it-yourself cartridge.
