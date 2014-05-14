@@ -6,7 +6,7 @@
 
 LOG_FILE="${OPENSHIFT_DIY_LOG_DIR}play.log"
 
-PLAY_PROCESS="[j]ava .*com.typesafe.play.*"
+PLAY_PROCESS="java *"
 
 function kill_app {
         COMMAND="$1"
