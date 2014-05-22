@@ -164,7 +164,7 @@ Copy and paste the git url to add it as a remote repo (replace the uuid part wit
 
 That's it, you have just cloned your openshift repo, now we will add the quickstart repo:
 
-    git remote add quickstart -m master git://github.com/opensas/play2-openshift-quickstart.git
+    git remote add quickstart -m master git://github.com/JamesSullivan/play2-openshift-quickstart.git
     git pull -s recursive -X theirs quickstart master
 
 Then run the stage task, add your changes to git's index, commit and push the repo upstream (you can also just run the *openshift_deploy* script):
