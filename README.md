@@ -1,7 +1,7 @@
 Play framework 2 application on OpenShift Express
 ============================
 
-This a copied and Updated version of https://github.com/opensas/play2-openshift-quickstart that supports Play Framework 2.2 (which the original does not) as well as earlier versions.
+This a copied and Updated version of https://github.com/opensas/play2-openshift-quickstart that supports Play Framework 2.2 and 2.3 (which the original does not) as well as earlier versions.
 
 This git repository  will help you get up and running quickly with a Play framework 2 application
 on OpenShift Express taking advantage of the do-it-yourself cartridge.
@@ -9,9 +9,20 @@ on OpenShift Express taking advantage of the do-it-yourself cartridge.
 Running on OpenShift
 --------------------
 
-Create a new Play framework 2.0, 2.1 or 2.2 application
+NOTE FOR PLAY 2.3 USERS: With the move to Play 2.3 the 'play' command has been replaced by the 'activator' command so for the remainder of this quickstart if you are using Play 2.3 simply replace all instances of the play command with activator. If you use the 'openshift_deploy' helper script you will also need to edit that and replace all instances of 'play' with 'activator' and then save it.
+
+Create a new Play framework 2.0, 2.1, 2.2 or 2.3 application
+
+For Play 2.0, 2.1 or 2.2 use
 
     play new play2demo
+
+For Play 2.3 use
+
+    activator new play2demo
+    
+And then
+    
     cd play2demo
     git init
 
@@ -66,7 +77,13 @@ And then add this repository as a remote repo named quickstart:
 
 Then use the stage task to prepare your deployment
 
+For Play 2.0, 2.1 or 2.2 use
+
     play clean compile stage
+
+For Play 2.3 use
+
+    activator clean compile stage
 
 And add your changes to git's index, commit and push the repo upstream:
 
