@@ -31,7 +31,7 @@ if [[ ! $? -eq 0 ]]; then
         exit $?
 fi
 
-pushd "$OPENSHIFT_REPO_DIR" > /dev/null
+pushd "$OPENSHIFT_REPO_DIR/target/universal/stage/" > /dev/null
 
 #kill play if it was running
 if [[ -f "RUNNING_PID" ]]; then
