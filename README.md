@@ -116,7 +116,7 @@ Then uncomment the following lines from your conf/openshift.conf, like this:
     db.default.user=${OPENSHIFT_DB_USERNAME}
     db.default.password=${OPENSHIFT_DB_PASSWORD}
 
-You'll also have to include the mysql driver as a dependency. Add this line to project/Build.scala file:
+You'll also have to include the mysql driver as a dependency. Add this line to your build.sbt or project/Build.scala file:
 
     val appDependencies = Seq( 
         "mysql" % "mysql-connector-java" % "5.1.18" 
