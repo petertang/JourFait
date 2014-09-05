@@ -1,10 +1,7 @@
-Play framework 2 application on OpenShift Express
+Play framework 2.X application on OpenShift Express
 ============================
 
-This a copied and Updated version of https://github.com/opensas/play2-openshift-quickstart that supports Play Framework 2.2 and 2.3 (which the original does not) as well as earlier versions.
-
-This git repository  will help you get up and running quickly with a Play framework 2 application
-on OpenShift Express taking advantage of the do-it-yourself cartridge.
+This git repository  will help you get up and running quickly with a Play Framework 2 application (including versions 2.1, 2.2 and 2.3) on OpenShift Express taking advantage of the do-it-yourself cartridge. To work within the constrained amount of memory available in the free versions of OpenShift, compilation takes place locally and is then deployed. For a different approach from that taken here see http://misto.ch/play-on-openshift/
 
 Running on OpenShift
 --------------------
@@ -318,6 +315,12 @@ Play will then run your app in production mode. The server will listen to ${OPEN
 * **.openshift/action_hooks/stop** just tries to kill the RUNNING_PID process, and then checks that no "java" process is running. If it's there, it tries five times to kill it nicely, and then if tries another five times to kill it with -SIGKILL.
 
 Acknowledgments
+----------------------------
+
+This a copied and Updated version of https://github.com/opensas/play2-openshift-quickstart with contributions from a number of people since then.
+
+
+Original Author Acknowledgments
 ----------------------------
 
 I couldn't have developed this quickstart without the help of [marekjelen](https://github.com/marekjelen) who answered [my questions on stackoverflow](http://stackoverflow.com/questions/9446275/best-approach-to-integrate-netty-with-openshift) and who also shared his [JRuby quickstart repo](https://github.com/marekjelen/openshift-jruby#readme). (I know, open source rocks!)
