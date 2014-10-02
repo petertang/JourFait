@@ -1,0 +1,9 @@
+@(tasks: List[Task])(implicit lang: Lang)
+
+@main(Messages("application.name")) {
+    <dl>
+    @for(task <- tasks) {
+        <dt><a href="@routes.TasksController.show(task.id)">@task.description</a></dt>
+    }
+    </dl>
+}

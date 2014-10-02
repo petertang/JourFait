@@ -1,0 +1,17 @@
+@(taskForm: Form[Task])(implicit lang: Lang, flash: Flash) 
+
+@import helper._
+@main(Messages("application.name")) { 
+
+  @helper.form(action = routes.TasksController.save()) {
+	<fieldset>
+		<legend>New Task</legend>
+		@helper.inputText(taskForm("id"))
+		@helper.inputText(taskForm("description"))
+	</fieldset>
+	<p>
+		<input type="submit" class="btn primary" value='@Messages("products.new.submit")'>
+	</p>
+	<p>@flash / @lang</p>
+  } 
+}
