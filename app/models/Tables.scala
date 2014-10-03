@@ -1,5 +1,7 @@
 package models
 
+import org.joda.time.DateTime
+
 object Tables extends Tables {
   val profile = scala.slick.driver.MySQLDriver
 }
@@ -28,8 +30,11 @@ trait Tables {
 
     def add(task: Task)(implicit session: Session): Unit = { this += task }
 
-    //def completeTask(task: Task) = tasks - task + Task(task.id, task.description, Some(new DateTime().getMillis()))
-
+    def completeTask(task: Task)(implicit session: Session): Unit =
+      {
+        val q = for { c <- this if c.id === task.id } yield c.completedDate
+        q.update(Some(new DateTime().getMillis()))
+      }
   }
 }
 

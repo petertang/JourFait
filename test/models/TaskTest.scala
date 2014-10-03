@@ -46,4 +46,14 @@ class TaskTest extends FlatSpec with BeforeAndAfter {
     assert(tasks.isDefined)
     assert(tasks.get.description.contains("is 55"))
   }
+  
+  it should "update completed time when marked complete" in {
+    createSchema()
+    val task = Task(10L, "Task 10")
+    Tables.Tasks.add(task)
+    Tables.Tasks.completeTask(task)
+    val dbTask = Tables.Tasks.findById(10L)
+    assert(dbTask.isDefined)
+    assert(dbTask.get.completedDate.isDefined)
+  }
 }
