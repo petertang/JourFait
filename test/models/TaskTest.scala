@@ -34,26 +34,29 @@ class TaskTest extends FlatSpec with BeforeAndAfter {
 
   it should "increase in size after an add" in {
     createSchema()
-    Tables.Tasks.add(Task(999L, "Peter"))
+    Tables.Tasks.add(Task(Some(999L), "Peter"))
     val tasks = Tables.Tasks.findAll
     assert(1 == tasks.size)
   }
 
   it should "can be searched by id" in {
     createSchema()
-    Tables.Tasks.add(Task(55L, "My is 55"))
-    val tasks = Tables.Tasks.findById(55L)
+    val task = Tables.Tasks.add(Task(None, "My is 55"))
+    val tasks = Tables.Tasks.findById(task.id.get)
     assert(tasks.isDefined)
     assert(tasks.get.description.contains("is 55"))
   }
   
   it should "update completed time when marked complete" in {
     createSchema()
-    val task = Task(10L, "Task 10")
-    Tables.Tasks.add(task)
-    Tables.Tasks.completeTask(task)
-    val dbTask = Tables.Tasks.findById(10L)
+    val task = Task(None, "Task 10")
+    val addedTask = Tables.Tasks.add(task)
+    val completedTask = Tables.Tasks.completeTask(addedTask)
+    assert(completedTask.id === addedTask.id)
+    assert(completedTask.completedDate.isDefined)
+    val dbTask = Tables.Tasks.findById(addedTask.id.get)
     assert(dbTask.isDefined)
     assert(dbTask.get.completedDate.isDefined)
+    assert(dbTask.get.completedDate === completedTask.completedDate )
   }
 }

@@ -11,11 +11,12 @@ object TasksController extends Controller {
 
   private val taskForm: Form[Task] = Form(
     mapping(
-      "id" -> longNumber.verifying("validation.id.duplicate", _ == 1),
+      "id" -> optional(longNumber),
       "description" -> nonEmptyText,
       "date" -> optional(longNumber),
       "dailyFlag" -> boolean)(Task.apply)(Task.unapply))
 
+  
   def list = DBAction {
     implicit rs =>
       val tasks = Tasks.findAll

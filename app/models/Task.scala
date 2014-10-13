@@ -1,6 +1,6 @@
 package models
 
-case class Task(id: Long, description: String, completedDate: Option[Long] = None, dailyFlag: Boolean = false)
+case class Task(id: Option[Long] = None, description: String, completedDate: Option[Long] = None, dailyFlag: Boolean = false)
 
 /*
 object Task {
