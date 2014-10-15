@@ -21,7 +21,7 @@ object TasksController extends Controller {
     implicit rs =>
       val tasks = Tasks.findAll
 
-      Ok(views.html.tasks(tasks))
+      Ok(views.html.tasks(tasks, taskForm))
   }
 
   def show(id: Long) = DBAction {

@@ -1,0 +1,11 @@
+.bgImage {
+	background: url(/assets/images/background1.jpg);
+	background-repeat: no-repeat;
+    background-size: contain;
+    background-origin: content-box;
+}
+
+html, body {
+	margin: 0;
+	height: 100%;
+}
