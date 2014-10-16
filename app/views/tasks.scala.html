@@ -7,7 +7,12 @@
 
 	@helper.form(action = routes.TasksController.save) {
 	<div class="row">
-			<div class="col-xs-11">@helper.inputText(taskForm("description"), 'class -> "form-control", 'placeholder -> "Enter new task")</div>
+			<div class="col-xs-9">
+			  @helper.inputText(taskForm("description"), 'class -> "form-control", 'placeholder -> "Enter new task")
+			</div>
+			<div class="col-xs-2">
+			  @helper.checkbox(taskForm("dailyFlag"), 'class -> "form-control")
+			</div>			
 			<div class="col-xs-1"><button type="submit" class="form-control">+</button></div>
 		
 	</div>

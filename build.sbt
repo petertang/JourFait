@@ -12,7 +12,7 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   "com.github.nscala-time" %% "nscala-time" % "1.4.0",
-  "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test",
+  "org.scalatestplus" %% "play" % "1.2.0" % "test",
   "mysql" % "mysql-connector-java" % "5.1.27",
   "com.typesafe.slick" %% "slick" % "2.1.0",
   "com.typesafe.play" %% "play-slick" % "0.8.0"

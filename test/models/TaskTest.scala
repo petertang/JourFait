@@ -5,6 +5,7 @@ import scala.slick.jdbc.meta._
 
 import org.scalatest.FlatSpec
 import org.scalatest.BeforeAndAfter
+import org.joda.time.DateTime
 
 class TaskTest extends FlatSpec with BeforeAndAfter {
 
@@ -34,29 +35,40 @@ class TaskTest extends FlatSpec with BeforeAndAfter {
 
   it should "increase in size after an add" in {
     createSchema()
-    Tables.Tasks.add(Task(Some(999L), "Peter"))
+    Tables.Tasks.add(Task(Some(999L), description = "Peter", owner = "petertang", startDate = new DateTime()))
     val tasks = Tables.Tasks.findAll
     assert(1 == tasks.size)
   }
 
   it should "can be searched by id" in {
     createSchema()
-    val task = Tables.Tasks.add(Task(None, "My is 55"))
+    val task = Tables.Tasks.add(Task(None, "My is 55", owner = "petertang", startDate = new DateTime()))
     val tasks = Tables.Tasks.findById(task.id.get)
     assert(tasks.isDefined)
     assert(tasks.get.description.contains("is 55"))
   }
-  
+
   it should "update completed time when marked complete" in {
     createSchema()
-    val task = Task(None, "Task 10")
+    val task = Task(None, "Task 10", owner = "petertang", startDate = new DateTime())
     val addedTask = Tables.Tasks.add(task)
-    val completedTask = Tables.Tasks.completeTask(addedTask)
-    assert(completedTask.id === addedTask.id)
-    assert(completedTask.completedDate.isDefined)
+    val completedTime = Tables.Tasks.completeTask(addedTask.id.get)
     val dbTask = Tables.Tasks.findById(addedTask.id.get)
     assert(dbTask.isDefined)
     assert(dbTask.get.completedDate.isDefined)
-    assert(dbTask.get.completedDate === completedTask.completedDate )
+    assert(dbTask.get.completedDate.get === completedTime)
   }
+
+  it should "update completed time and next time when marked complete and dailyflag is set" in {
+    createSchema()
+    val task = Task(None, "Task 10", owner = "petertang", dailyFlag = true, startDate = new DateTime())
+    val addedTask = Tables.Tasks.add(task)
+    val completedTime = Tables.Tasks.completeTask(addedTask.id.get)
+    val dbTask = Tables.Tasks.findById(addedTask.id.get)
+    assert(dbTask.isDefined)
+    assert(dbTask.get.completedDate.isDefined)
+    assert(dbTask.get.completedDate.get === completedTime)
+    assert(dbTask.get.nextDate.isDefined)
+  }
+
 }

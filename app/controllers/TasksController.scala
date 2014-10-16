@@ -6,22 +6,28 @@ import play.api.data.Forms._
 import models.Tables._
 import models.Task;
 import play.api.db.slick._
+import org.joda.time.DateTime
 
 object TasksController extends Controller {
 
-  private val taskForm: Form[Task] = Form(
+  private val createTaskForm: Form[Task] = Form(
     mapping(
-      "id" -> optional(longNumber),
       "description" -> nonEmptyText,
-      "date" -> optional(longNumber),
-      "dailyFlag" -> boolean)(Task.apply)(Task.unapply))
+      "dailyFlag" -> boolean)(formToTask)(taskToForm))
 
-  
+  private def formToTask(description: String, dailyFlag: Boolean) = {
+    Task(None, description, owner = "petertang", startDate = new DateTime(), dailyFlag = dailyFlag)
+  }
+
+  private def taskToForm(task: Task) = {
+    Option(task.description, task.dailyFlag)
+  }
+
   def list = DBAction {
     implicit rs =>
       val tasks = Tasks.findAll
 
-      Ok(views.html.tasks(tasks, taskForm))
+      Ok(views.html.tasks(tasks, createTaskForm))
   }
 
   def show(id: Long) = DBAction {
@@ -33,7 +39,8 @@ object TasksController extends Controller {
 
   def save() = DBAction {
     implicit rs =>
-      val newTaskForm = taskForm.bindFromRequest()
+
+      val newTaskForm = createTaskForm.bindFromRequest()
 
       newTaskForm.fold(
         hasErrors = {
@@ -52,12 +59,26 @@ object TasksController extends Controller {
       System.out.println(request2flash)
       val form = if (request2flash.get("error").isDefined) {
         System.out.println("Binding form...")
-        taskForm.bind(request2flash.data)
+        System.out.println(request2flash.data)
+        createTaskForm.bind(request2flash.data)
       } else
-        taskForm
+        createTaskForm
 
       Ok(views.html.editTask(form))
   }
 
+  def complete(id: Long) = DBAction {
+    implicit rs =>
+      Tasks.completeTask(id)
+      Ok
+  }
+
+  def progress(id: Long, step: Int) = Action {
+    Ok
+  }
+
+  def delete(id: Long) = Action {
+    NotImplemented
+  }
 } 
  

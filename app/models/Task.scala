@@ -1,6 +1,8 @@
 package models
 
-case class Task(id: Option[Long] = None, description: String, completedDate: Option[Long] = None, dailyFlag: Boolean = false)
+import org.joda.time.DateTime
+
+case class Task(id: Option[Long] = None, description: String, owner: String, startDate: DateTime, completedDate: Option[DateTime] = None, nextDate: Option[DateTime] = None, dailyFlag: Boolean = false)
 
 /*
 object Task {
