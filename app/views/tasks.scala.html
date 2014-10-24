@@ -3,7 +3,7 @@
 @import helpers.BlankInputHelper._
 
 @main(Messages("application.name")) {
-<div class="container">
+<div class="container" ng-controller="TaskController as taskCtrl">
 
 	@helper.form(action = routes.TasksController.save) {
 	<div class="row">
@@ -13,23 +13,19 @@
 			<div class="col-xs-2">
 			  @helper.checkbox(taskForm("dailyFlag"), 'class -> "form-control")
 			</div>			
-			<div class="col-xs-1"><button type="submit" class="form-control">+</button></div>
-		
+			<div class="col-xs-1"><button type="submit" class="form-control">+</button></div>		
 	</div>
-
+ 	}
 	<div class="row">
 		<div class="col-xs-12">
 			<h3>All tasks</h3>
 			<dl>
-				@for(task <- tasks) {
-				<dt>
-					<input type="checkbox"/> <a
-						href="@routes.TasksController.show(task.id.get)">@task.description</a>
+				<dt ng-repeat="task in tasks">
+					<input type="checkbox" ng-click="completeTask($index)"> <a
+						ng-click="completeTask($index)"> {{task.description}}</a>
 				</dt>
-				}
 			</dl>
 		</div>
 	</div>
-	}
 </div>
 }

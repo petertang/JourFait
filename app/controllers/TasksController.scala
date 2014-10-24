@@ -7,6 +7,9 @@ import models.Tables._
 import models.Task;
 import play.api.db.slick._
 import org.joda.time.DateTime
+import play.api.libs.json.Json
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 object TasksController extends Controller {
 
@@ -14,6 +17,8 @@ object TasksController extends Controller {
     mapping(
       "description" -> nonEmptyText,
       "dailyFlag" -> boolean)(formToTask)(taskToForm))
+
+  implicit val taskWrites: Writes[Task] = Json.writes[Task]
 
   private def formToTask(description: String, dailyFlag: Boolean) = {
     Task(None, description, owner = "petertang", startDate = new DateTime(), dailyFlag = dailyFlag)
@@ -28,6 +33,13 @@ object TasksController extends Controller {
       val tasks = Tasks.findAll
 
       Ok(views.html.tasks(tasks, createTaskForm))
+  }
+
+  def listJson = DBAction {
+    implicit rs =>
+      val tasks = Tasks.findAll
+
+      Ok(Json.toJson(tasks))
   }
 
   def show(id: Long) = DBAction {
@@ -58,8 +70,6 @@ object TasksController extends Controller {
     implicit request =>
       System.out.println(request2flash)
       val form = if (request2flash.get("error").isDefined) {
-        System.out.println("Binding form...")
-        System.out.println(request2flash.data)
         createTaskForm.bind(request2flash.data)
       } else
         createTaskForm
@@ -77,8 +87,10 @@ object TasksController extends Controller {
     Ok
   }
 
-  def delete(id: Long) = Action {
-    NotImplemented
+  def delete(id: Long) = DBAction {
+    implicit rs =>
+      if (Tasks.delete(id) == 0) NotImplemented
+      else Ok
   }
 } 
  

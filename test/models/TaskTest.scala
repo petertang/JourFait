@@ -71,4 +71,13 @@ class TaskTest extends FlatSpec with BeforeAndAfter {
     assert(dbTask.get.nextDate.isDefined)
   }
 
+  it should "delete element if id found can be found" in {
+    createSchema()
+    val task = Tables.Tasks.add(Task(Some(999L), description = "Peter", owner = "petertang", startDate = new DateTime()))
+    val tasks = Tables.Tasks.list
+    val deleted = Tables.Tasks.delete(task.id.get)
+    assert(deleted == 1)
+    val tasksAfterDelete = Tables.Tasks.list
+    assert(tasksAfterDelete.size == 0)
+  }
 }

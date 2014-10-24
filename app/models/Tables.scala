@@ -42,7 +42,7 @@ trait Tables {
       task.copy(id = Some(id))
     }
 
-    def completeTask(id: Long)(implicit session: Session): Long =
+    def completeTask(id: Long)(implicit session: Session): DateTime =
       {
         val completedTime = new DateTime()
         val task: Task = findById(id).get
@@ -54,8 +54,13 @@ trait Tables {
         /* else if (task.dailyFlag && accumulating) q.update((Some(completedTime.getMillis()), Some(comp */
         else
           q.update((Some(completedTime), None))
-        completedTime.getMillis()
+        completedTime
       }
+    
+    def delete(id: Long)(implicit session: Session): Int = {
+      val q = for { c <- this if c.id === id } yield c
+      q.delete
+    }
   }
 }
 
