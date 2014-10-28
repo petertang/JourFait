@@ -1,1 +1,3 @@
 application.name = DailyDo
+all.tasks = All tasks
+task.input.placeholder = Enter a new task

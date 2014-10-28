@@ -10,7 +10,6 @@ object Tables extends Tables {
 trait Tables {
 
   val profile: scala.slick.driver.JdbcProfile
-
   import profile.simple._
 
   class Tasks(tag: Tag) extends Table[Task](tag, "TASK") {
@@ -42,10 +41,11 @@ trait Tables {
       task.copy(id = Some(id))
     }
 
+    @throws(classOf[Error])
     def completeTask(id: Long)(implicit session: Session): DateTime =
       {
         val completedTime = new DateTime()
-        val task: Task = findById(id).get
+        val task: Task = findById(id).getOrElse(throw new Error("Unknown task"))
         val q = for { c <- this if c.id === id } yield (c.completedDate, c.nextDate)
         // not accumulated
         if (task.dailyFlag)

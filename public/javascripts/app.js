@@ -7,8 +7,6 @@
         });
         
         $scope.completeTask = function(index) {
-            console.log($scope.tasks)
-            console.log(index)
             $http.put('/tasks/' + $scope.tasks[index].id).success(function() {
                 $scope.tasks.splice(index, 1)
             });

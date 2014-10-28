@@ -1,1 +1,3 @@
 application.name = JourFait
+all.tasks = Tout les tâches
+task.input.placeholder = Mettez une nouvelle tâche

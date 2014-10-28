@@ -68,7 +68,6 @@ object TasksController extends Controller {
 
   def newTask = Action {
     implicit request =>
-      System.out.println(request2flash)
       val form = if (request2flash.get("error").isDefined) {
         createTaskForm.bind(request2flash.data)
       } else
@@ -79,8 +78,12 @@ object TasksController extends Controller {
 
   def complete(id: Long) = DBAction {
     implicit rs =>
-      Tasks.completeTask(id)
-      Ok
+      try {
+          Tasks.completeTask(id)
+          Ok
+      } catch {
+        case error: Error => System.out.println("Error"); BadRequest 
+      }
   }
 
   def progress(id: Long, step: Int) = Action {

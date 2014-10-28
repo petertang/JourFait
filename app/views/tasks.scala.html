@@ -8,7 +8,7 @@
 	@helper.form(action = routes.TasksController.save) {
 	<div class="row">
 			<div class="col-xs-9">
-			  @helper.inputText(taskForm("description"), 'class -> "form-control", 'placeholder -> "Enter new task")
+			  @helper.inputText(taskForm("description"), 'class -> "form-control", 'placeholder -> Messages("task.input.placeholder"))
 			</div>
 			<div class="col-xs-2">
 			  @helper.checkbox(taskForm("dailyFlag"), 'class -> "form-control")
@@ -18,11 +18,10 @@
  	}
 	<div class="row">
 		<div class="col-xs-12">
-			<h3>All tasks</h3>
+			<h3>@Messages("all.tasks")</h3>
 			<dl>
 				<dt ng-repeat="task in tasks">
-					<input type="checkbox" ng-click="completeTask($index)"> <a
-						ng-click="completeTask($index)"> {{task.description}}</a>
+					<input type="checkbox" ng-click="completeTask($index)"> {{task.description}}
 				</dt>
 			</dl>
 		</div>
