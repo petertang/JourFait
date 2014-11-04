@@ -11,6 +11,8 @@ import org.joda.time.DateTime
 import play.api.db.slick.DB
 import scala.slick.driver.H2Driver.simple.Session
 import play.api.libs.json.JsArray
+import org.omg.CosNaming.NamingContextPackage.NotFound
+import play.api.libs.json.JsNull
 
 /**
  * Add your spec here.
@@ -26,7 +28,7 @@ class ApplicationSpec extends Specification {
   def fakeApplication = FakeApplication(additionalConfiguration = configurationMap);
 
   abstract class InMemoryDBApplication extends WithApplication(fakeApplication)
-  
+
   abstract class WithDbData extends WithApplication(fakeApplication) {
     override def around[T: AsResult](t: => T): Result = super.around {
       setupData()
@@ -42,7 +44,7 @@ class ApplicationSpec extends Specification {
       }
     }
   }
-  
+
   "Application" should {
 
     "send 404 on a bad request" in new InMemoryDBApplication {
@@ -79,13 +81,25 @@ class ApplicationSpec extends Specification {
     "put on task completes task" in new WithDbData {
       val completeTask = route(FakeRequest(PUT, "/tasks/1")).get
 
-      status(completeTask) must equalTo(OK)     
+      status(completeTask) must equalTo(OK)
     }
-    
+
     "put on task that doesn't exist results in error" in new WithDbData {
       val completeTask = route(FakeRequest(PUT, "/tasks/999")).get
-      
+
       status(completeTask) must equalTo(BAD_REQUEST)
+    }
+
+    "create task through json" in new InMemoryDBApplication {
+      val task = route(FakeRequest(POST, "/tasks.json").withJsonBody(JsNull)).get
+
+      status(task) must equalTo(NOT_IMPLEMENTED)
+    }
+
+    "create task" in new InMemoryDBApplication {
+      val task = route(FakeRequest(POST,"/tasks")).get
+
+      status(task) must equalTo(SEE_OTHER)
     }
   }
 }

@@ -4,12 +4,15 @@ import play.api.mvc.{ Flash, Action, Controller }
 import play.api.data.Form
 import play.api.data.Forms._
 import models.Tables._
-import models.Task;
+import models.Task
 import play.api.db.slick._
 import org.joda.time.DateTime
 import play.api.libs.json.Json
 import play.api.libs.json._
+import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
+import org.omg.CosNaming.NamingContextPackage.NotFound
+import play.api.libs.json.ConstraintReads
 
 object TasksController extends Controller {
 
@@ -19,8 +22,16 @@ object TasksController extends Controller {
       "dailyFlag" -> boolean)(formToTask)(taskToForm))
 
   implicit val taskWrites: Writes[Task] = Json.writes[Task]
+  implicit val taskReads: Reads[Task] = (
+      (JsPath \ "description").read[String](minLength[String](1)) and
+      (JsPath \ "dailyFlag").read[Boolean]
+  )(jsonTaskToTask _)
 
   private def formToTask(description: String, dailyFlag: Boolean) = {
+    Task(None, description, owner = "petertang", startDate = new DateTime(), dailyFlag = dailyFlag)
+  }
+
+  private def jsonTaskToTask(description: String, dailyFlag: Boolean): Task = {
     Task(None, description, owner = "petertang", startDate = new DateTime(), dailyFlag = dailyFlag)
   }
 
@@ -79,10 +90,10 @@ object TasksController extends Controller {
   def complete(id: Long) = DBAction {
     implicit rs =>
       try {
-          Tasks.completeTask(id)
-          Ok
+        Tasks.completeTask(id)
+        Ok
       } catch {
-        case error: Error => System.out.println("Error"); BadRequest 
+        case error: Error => BadRequest
       }
   }
 
@@ -94,6 +105,20 @@ object TasksController extends Controller {
     implicit rs =>
       if (Tasks.delete(id) == 0) NotImplemented
       else Ok
+  }
+
+  def saveJson = DBAction(parse.json) {
+    implicit rs =>
+      val json = rs.body
+      json.validate[Task].fold(
+        valid = {
+          task =>
+            Tasks.add(task)
+            Ok
+        },
+        invalid = {
+          errors => System.out.println(errors); NotImplemented 
+        })
   }
 } 
  

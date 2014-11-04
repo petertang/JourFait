@@ -1,29 +1,30 @@
-@(tasks: List[Task], taskForm: Form[Task])(implicit lang: Lang)
-
-@import helpers.BlankInputHelper._
+@(tasks: List[Task], taskForm: Form[Task])(implicit lang: Lang) 
+@import helpers.BlankInputHelper._ 
 
 @main(Messages("application.name")) {
 <div class="container" ng-controller="TaskController as taskCtrl">
-
-	@helper.form(action = routes.TasksController.save) {
-	<div class="row">
-			<div class="col-xs-9">
-			  @helper.inputText(taskForm("description"), 'class -> "form-control", 'placeholder -> Messages("task.input.placeholder"))
+	<div class="createTaskPanel">
+	    <form ng-submit="createTask()">
+		<div class="row panel-body">
+			<div class="col-xs-12">
+		      <button type="submit" class="float-right btn btn-default">+</button>
+			  @helper.checkbox(taskForm("dailyFlag"), 'class -> "float-right")
+			  <label class="sr-only" for="description">Description:</label>
+			  <span class="fill"><input type="text" placeholder="@Messages("task.input.placeholder")" class="form-control" name="description" ng-model="task.description"/></span>					
 			</div>
-			<div class="col-xs-2">
-			  @helper.checkbox(taskForm("dailyFlag"), 'class -> "form-control")
-			</div>			
-			<div class="col-xs-1"><button type="submit" class="form-control">+</button></div>		
+		</div>
+		</form>
 	</div>
- 	}
 	<div class="row">
 		<div class="col-xs-12">
-			<h3>@Messages("all.tasks")</h3>
-			<dl>
-				<dt ng-repeat="task in tasks">
-					<input type="checkbox" ng-click="completeTask($index)"> {{task.description}}
-				</dt>
-			</dl>
+			<h2>@Messages("all.tasks")</h2>
+			<ul class="list-unstyled">
+				<li ng-repeat="task in tasks" class="taskItem">
+					<input type="checkbox" ng-click="completeTask($index)" />
+					{{task.description}}
+					<input type="checkbox"/>
+				</li>
+			</ul>
 		</div>
 	</div>
 </div>

@@ -7,6 +7,7 @@ GET     /                           controllers.Application.index
 GET     /tasks                      controllers.TasksController.list
 GET		/tasks.json					controllers.TasksController.listJson
 POST	/tasks						controllers.TasksController.save
+POST	/tasks.json					controllers.TasksController.saveJson
 GET		/tasks/new					controllers.TasksController.newTask
 GET		/tasks/:id					controllers.TasksController.show(id: Long)
 DELETE	/tasks/:id					controllers.TasksController.delete(id: Long)
