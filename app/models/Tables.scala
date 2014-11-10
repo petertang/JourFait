@@ -25,7 +25,9 @@ trait Tables {
     def completedDate = column[Option[DateTime]]("COMPLETED_DATE")
     def nextDate = column[Option[DateTime]]("NEXT_DATE")
     def dailyFlag = column[Boolean]("DAILY_FLAG")
-    def * = (id.?, desc, owner, startDate, completedDate, nextDate, dailyFlag) <> (Task.tupled, Task.unapply)
+    def noSteps = column[Int]("NO_STEPS")
+    def stepsCompleted = column[Int]("STEPS_DONE")
+    def * = (id.?, desc, owner, startDate, completedDate, nextDate, dailyFlag, noSteps, stepsCompleted) <> (Task.tupled, Task.unapply)
   }
 
   lazy val Tasks = new TableQuery(new Tasks(_)) {
@@ -46,20 +48,29 @@ trait Tables {
       {
         val completedTime = new DateTime()
         val task: Task = findById(id).getOrElse(throw new Error("Unknown task"))
-        val q = for { c <- this if c.id === id } yield (c.completedDate, c.nextDate)
+        val q = for { c <- this if c.id === id } yield (c.completedDate, c.nextDate, c.stepsCompleted)
         // not accumulated
         if (task.dailyFlag)
-          q.update((Some(completedTime), Some(completedTime.plusDays(1))))
+          q.update((Some(completedTime), Some(completedTime.plusDays(1)), 0))
         // future - accumulating
         /* else if (task.dailyFlag && accumulating) q.update((Some(completedTime.getMillis()), Some(comp */
         else
-          q.update((Some(completedTime), None))
+          q.update((Some(completedTime), None, 0))
         completedTime
       }
-    
+
     def delete(id: Long)(implicit session: Session): Int = {
       val q = for { c <- this if c.id === id } yield c
       q.delete
+    }
+
+    def updateProgress(id: Long, step: Int)(implicit session: Session) = {
+      val task: Task = findById(id).getOrElse(throw new Error("Unknown task"))
+      if (step == task.noSteps) completeTask(id)
+      else {
+        val q = for { c <- this if c.id === id } yield (c.stepsCompleted)
+        q.update((step))
+      }
     }
   }
 }

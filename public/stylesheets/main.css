@@ -25,11 +25,11 @@ body {
 	border: 0.5px solid;
 	border-radius: 4px;
 	padding: 8px;
-	margin: 5px;	
+	margin: 5px;
 }
 
 .float-right {
-	float: right;	
+	float: right;
 }
 
 .fill {
@@ -40,4 +40,9 @@ body {
 .max-height {
 	height: 100%;
 	display: block;
+}
+
+.faded {
+	opacity: 0.4;
+	filter: alpha(opacity = 40);
 }

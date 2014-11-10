@@ -24,27 +24,34 @@ object TasksController extends Controller {
   implicit val taskWrites: Writes[Task] = Json.writes[Task]
   implicit val taskReads: Reads[Task] = (
       (JsPath \ "description").read[String](minLength[String](1)) and
-      (JsPath \ "dailyFlag").read[Boolean]
+      (JsPath \ "dailyFlag").read[Boolean] and
+      (JsPath \ "noSteps").readNullable[Int]
   )(jsonTaskToTask _)
 
   private def formToTask(description: String, dailyFlag: Boolean) = {
     Task(None, description, owner = "petertang", startDate = new DateTime(), dailyFlag = dailyFlag)
   }
 
-  private def jsonTaskToTask(description: String, dailyFlag: Boolean): Task = {
-    Task(None, description, owner = "petertang", startDate = new DateTime(), dailyFlag = dailyFlag)
+  private def jsonTaskToTask(description: String, dailyFlag: Boolean, noSteps: Option[Int]): Task = {
+    Task(None, description, owner = "petertang", startDate = new DateTime(), dailyFlag = dailyFlag, noSteps = noSteps.getOrElse(1))
   }
 
   private def taskToForm(task: Task) = {
     Option(task.description, task.dailyFlag)
   }
 
+  def list = Action {
+    Ok(views.html.tasks())
+  }
+  /*
   def list = DBAction {
     implicit rs =>
       val tasks = Tasks.findAll
 
       Ok(views.html.tasks(tasks, createTaskForm))
   }
+  * 
+  */
 
   def listJson = DBAction {
     implicit rs =>
@@ -97,8 +104,18 @@ object TasksController extends Controller {
       }
   }
 
-  def progress(id: Long, step: Int) = Action {
-    Ok
+  def progress(id: Long, step: Int) = DBAction {
+    implicit rs =>
+      Tasks.findById(id) match {
+        case None => BadRequest
+        case Some(task) => {
+            if (step < 1 || step > task.noSteps) BadRequest
+            else {
+              Tasks.updateProgress(id, step)
+              Ok
+            }
+        }
+      }
   }
 
   def delete(id: Long) = DBAction {
@@ -113,12 +130,13 @@ object TasksController extends Controller {
       json.validate[Task].fold(
         valid = {
           task =>
-            Tasks.add(task)
-            Ok
+            val newTask = Tasks.add(task)
+            Ok(Json.toJson(newTask))
         },
         invalid = {
-          errors => System.out.println(errors); NotImplemented 
+          errors => BadRequest(JsError.toFlatJson(errors)) 
         })
   }
+  
 } 
  

@@ -1,16 +1,27 @@
-@(tasks: List[Task], taskForm: Form[Task])(implicit lang: Lang) 
+@()(implicit lang: Lang) 
 @import helpers.BlankInputHelper._ 
 
 @main(Messages("application.name")) {
 <div class="container" ng-controller="TaskController as taskCtrl">
 	<div class="createTaskPanel">
-	    <form ng-submit="createTask()">
+	    <form ng-submit="createTask()" novalidate name="form">
 		<div class="row panel-body">
 			<div class="col-xs-12">
-		      <button type="submit" class="float-right btn btn-default">+</button>
-			  @helper.checkbox(taskForm("dailyFlag"), 'class -> "float-right")
+		      <button type="submit" class="float-right btn btn-default" ng-disabled="form.$invalid">+</button>
+			  <span class="float-right"><a href="#" ng-click="toggleDaily()"><img src="@routes.Assets.at("images/monday.svg")" height="38" ng-class="{faded: !task.dailyFlag}"/></a></span>
+			  <span class="float-right"><a href="#" ng-click="toggleSettings()"><img src="@routes.Assets.at("images/settings21.svg")" height="33" /></a></span>
 			  <label class="sr-only" for="description">Description:</label>
-			  <span class="fill"><input type="text" placeholder="@Messages("task.input.placeholder")" class="form-control" name="description" ng-model="task.description"/></span>					
+			  <span class="fill"><input type="text" placeholder="@Messages("task.input.placeholder")" class="form-control" name="description" ng-model="task.description" required/></span>					
+			</div>
+			<div ng-show="settingsOn"><div class="col-xs-1"></div>
+				<div class="col-xs-10">
+					Repeat every 
+					<select>
+				  		<option value="1">1</option>
+				  		<option value="2">2</option>
+				  	</select> 
+					days</div><div class="col-xs-1">
+				</div>
 			</div>
 		</div>
 		</form>
@@ -22,7 +33,7 @@
 				<li ng-repeat="task in tasks" class="taskItem">
 					<input type="checkbox" ng-click="completeTask($index)" />
 					{{task.description}}
-					<input type="checkbox"/>
+					<span ng-show="task.stepsCompleted > 1" ng-repeat="i in getTaskSteps(task) track by $index"><input type="checkbox" ng-click="finishStep($parent.$index, $index + 1)" ng-checked="$index < task.stepsCompleted" /></span>
 				</li>
 			</ul>
 		</div>
