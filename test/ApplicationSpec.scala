@@ -26,7 +26,7 @@ class ApplicationSpec extends Specification with JsonMatchers {
   val map_h2_settings = Map("IGNORECASE" -> "TRUE",
     "MODE" -> "MYSQL",
     "TRACE_LEVEL_FILE" -> "4")
-  val configurationMap = inMemoryDatabase(options = map_h2_settings) + ("evolutionplugin" -> "enabled") + ("application.langs" -> "en")// + ("db.default.slick.driver" -> "h2")
+  val configurationMap = inMemoryDatabase(options = map_h2_settings) + ("evolutionplugin" -> "enabled") + ("application.langs" -> "en") // + ("db.default.slick.driver" -> "h2")
   def fakeApplication = FakeApplication(additionalConfiguration = configurationMap);
 
   abstract class InMemoryDBApplication extends WithApplication(fakeApplication)
@@ -126,7 +126,7 @@ class ApplicationSpec extends Specification with JsonMatchers {
       status(task) must equalTo(BAD_REQUEST)
     }
 
-    "create task in json with no steps" in new InMemoryDBApplication {
+    "create task in json with number steps defined" in new InMemoryDBApplication {
       val js = toJson(Map(
         "description" -> toJson("Testing"),
         "dailyFlag" -> toJson(false),
@@ -155,5 +155,83 @@ class ApplicationSpec extends Specification with JsonMatchers {
       status(completeTask) must equalTo(BAD_REQUEST)
     }
 
+    "create task in json with days to repeat defined" in new InMemoryDBApplication {
+      val js = toJson(Map(
+        "description" -> toJson("Testing"),
+        "dailyFlag" -> toJson(false),
+        "noSteps" -> toJson(5),
+        "repeatNoDays" -> toJson(3)))
+      val task = route(FakeRequest(POST, "/tasks.json").withJsonBody(js)).get
+
+      status(task) must equalTo(OK)
+      contentAsString(task) must /("repeatNoDays" -> 3.0)
+    }
+
+    "create task in json with start date defined as milliseconds" in new InMemoryDBApplication {
+      val js = toJson(Map(
+        "description" -> toJson("Testing"),
+        "dailyFlag" -> toJson(false),
+        "noSteps" -> toJson(5),
+        "repeatNoDays" -> toJson(3),
+        "startDate" -> toJson(1249871294873L)))
+      val task = route(FakeRequest(POST, "/tasks.json").withJsonBody(js)).get
+
+      status(task) must equalTo(OK)
+      contentAsString(task) must /("startDate" -> 1249871294873.0)
+    }
+
+    "create task in json with start date defined as html5 date input format" in new InMemoryDBApplication {
+      val js = toJson(Map(
+        "description" -> toJson("Testing"),
+        "dailyFlag" -> toJson(false),
+        "noSteps" -> toJson(5),
+        "repeatNoDays" -> toJson(3),
+        "startDate" -> toJson("2014-03-03T12:22:01.555Z")))
+      val task = route(FakeRequest(POST, "/tasks.json").withJsonBody(js)).get
+
+      status(task) must equalTo(OK)
+      contentAsString(task) must /("startDate" -> new DateTime(2014, 3, 3, 12, 22, 1, 555).getMillis().toDouble)
+    }
+
+    "register an account with json with incomplete data" in new InMemoryDBApplication {
+      val js = toJson(Map(
+        "username" -> "petertang"))
+      val account = route(FakeRequest(POST, "/accounts").withJsonBody(js)).get
+
+      status(account) must equalTo(BAD_REQUEST)
+    }
+
+    "register an account with json with complete data" in new InMemoryDBApplication {
+      val js = toJson(Map(
+        "username" -> toJson("petertang"),
+        "firstName" -> toJson("peter"),
+        "lastName" -> toJson("tang"),
+        "email" -> toJson("tangp.peter@gmail.com"),
+        "password" -> toJson("password")))
+
+      val account = route(FakeRequest(POST, "/accounts").withJsonBody(js)).get
+
+      status(account) must equalTo(OK)
+    }
+
+    "register an account with json with invalid email" in new InMemoryDBApplication {
+      val js = toJson(Map(
+        "username" -> toJson("petertang"),
+        "firstName" -> toJson("peter"),
+        "lastName" -> toJson("tang"),
+        "email" -> toJson("tangp.peter"),
+        "password" -> toJson("password")))
+
+      val account = route(FakeRequest(POST, "/accounts").withJsonBody(js)).get
+
+      status(account) must equalTo(BAD_REQUEST)
+    }
+    
+    "register page" in new InMemoryDBApplication {
+      val registerPage = route(FakeRequest(GET, "/register")).get
+      
+      status(registerPage) must equalTo(OK)
+    }
+    
   }
 }

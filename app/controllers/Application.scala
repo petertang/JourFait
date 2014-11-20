@@ -10,8 +10,8 @@ object Application extends Controller {
       Ok(views.html.index("Your new application is ready, Peter."))
   }
 
-  def hello(name: String = "Peter") = Action {
+  def register = Action {
     implicit request =>
-      Ok(views.html.index("Hello: " + name))
+      Ok(views.html.register())
   }
 }

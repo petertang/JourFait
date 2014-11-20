@@ -2,6 +2,8 @@ package models
 
 import org.joda.time.DateTime
 
+
+
 case class Task(
     id: Option[Long] = None, 
     description: String, 
@@ -11,7 +13,8 @@ case class Task(
     nextDate: Option[DateTime] = None, 
     dailyFlag: Boolean = false, 
     noSteps: Int = 1, 
-    stepsCompleted: Int = 0)
+    stepsCompleted: Int = 0,
+    repeatNoDays: Int = 1) 
 
 /*
 object Task {

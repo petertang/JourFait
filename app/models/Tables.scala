@@ -11,7 +11,37 @@ trait Tables {
 
   val profile: scala.slick.driver.JdbcProfile
   import profile.simple._
-
+  
+  class Passwords(tag: Tag) extends Table[(String, String)](tag, "ACCOUNT_PRIVATE") {
+    def username = column[String]("USERNAME")
+    def password = column[String]("PASSWORD")
+    def usernameFK = foreignKey("account_private_ibfk_1", username, Accounts)(_.username)
+    
+    def * = (username, password)
+  }
+  lazy val Passwords = new TableQuery(new Passwords(_));
+  
+  class Accounts(tag: Tag) extends Table[Account](tag, "ACCOUNT") {
+    def username = column[String]("USERNAME", O.PrimaryKey)
+    def firstName = column[String]("FIRSTNAME")
+    def lastName = column[String]("LASTNAME")
+    def email = column[String]("EMAIL")
+    
+    def * = (username, firstName, lastName, email) <> (Account.tupled, Account.unapply)
+  }
+  
+  lazy val Accounts = new TableQuery(new Accounts(_)) {
+    def findByUsername(username: String)(implicit session: Session): Option[Account] = {
+      this.filter(_.username === username).firstOption
+    }
+    
+    def createAccount(account: Account, password: String)(implicit session: Session): Account = {
+      this += account
+      Passwords += (account.username, password)
+      account
+    }
+  }
+  
   class Tasks(tag: Tag) extends Table[Task](tag, "TASK") {
 
     implicit val jodaToSqlDate = MappedColumnType.base[DateTime, Date](
@@ -27,12 +57,13 @@ trait Tables {
     def dailyFlag = column[Boolean]("DAILY_FLAG")
     def noSteps = column[Int]("NO_STEPS")
     def stepsCompleted = column[Int]("STEPS_DONE")
-    def * = (id.?, desc, owner, startDate, completedDate, nextDate, dailyFlag, noSteps, stepsCompleted) <> (Task.tupled, Task.unapply)
+    def repeatNoDays = column[Int]("NO_DAYS_REPEAT")
+    def * = (id.?, desc, owner, startDate, completedDate, nextDate, dailyFlag, noSteps, stepsCompleted, repeatNoDays) <> (Task.tupled, Task.unapply)
   }
 
   lazy val Tasks = new TableQuery(new Tasks(_)) {
 
-    def findAll(implicit session: Session): List[Task] = this.list.filter(task => task.completedDate == None || (task.dailyFlag && task.nextDate.get.getMillis() < new DateTime().getMillis()))
+    def findAll(implicit session: Session): List[Task] = this.list.filter(task => (task.completedDate == None && new DateTime().isAfter(task.startDate)) || (task.dailyFlag && task.nextDate.get.isBefore(new DateTime())))
 
     def findById(id: Long)(implicit session: Session): Option[Task] = {
       this.filter(_.id === id).firstOption

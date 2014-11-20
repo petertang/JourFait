@@ -4,6 +4,7 @@
 
 # Home page
 GET     /                           controllers.Application.index
+GET		/register					controllers.Application.register
 GET     /tasks                      controllers.TasksController.list
 GET		/tasks.json					controllers.TasksController.listJson
 POST	/tasks						controllers.TasksController.save
@@ -13,7 +14,7 @@ GET		/tasks/:id					controllers.TasksController.show(id: Long)
 DELETE	/tasks/:id					controllers.TasksController.delete(id: Long)
 PUT		/tasks/:id/complete			controllers.TasksController.complete(id: Long)
 PUT		/tasks/:id/step:stepNo		controllers.TasksController.progress(id: Long, stepNo: Int)
-
+POST	/accounts					controllers.AccountController.createAccount
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

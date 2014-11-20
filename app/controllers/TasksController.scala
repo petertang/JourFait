@@ -21,19 +21,22 @@ object TasksController extends Controller {
       "description" -> nonEmptyText,
       "dailyFlag" -> boolean)(formToTask)(taskToForm))
 
+  val Html5IsoJodaDateReads = jodaDateReads("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
   implicit val taskWrites: Writes[Task] = Json.writes[Task]
   implicit val taskReads: Reads[Task] = (
-      (JsPath \ "description").read[String](minLength[String](1)) and
-      (JsPath \ "dailyFlag").read[Boolean] and
-      (JsPath \ "noSteps").readNullable[Int]
-  )(jsonTaskToTask _)
+    (JsPath \ "description").read[String](minLength[String](1)) and
+    (JsPath \ "dailyFlag").read[Boolean] and
+    (JsPath \ "noSteps").readNullable[Int] and
+    (JsPath \ "startDate").readNullable[DateTime](Html5IsoJodaDateReads) and
+    (JsPath \ "repeatNoDays").readNullable[Int])(jsonTaskToTask _)
 
   private def formToTask(description: String, dailyFlag: Boolean) = {
     Task(None, description, owner = "petertang", startDate = new DateTime(), dailyFlag = dailyFlag)
   }
 
-  private def jsonTaskToTask(description: String, dailyFlag: Boolean, noSteps: Option[Int]): Task = {
-    Task(None, description, owner = "petertang", startDate = new DateTime(), dailyFlag = dailyFlag, noSteps = noSteps.getOrElse(1))
+  // TODO: Figure out how to avoid putting in defaults here again -- error prone, two places needed to change default
+  private def jsonTaskToTask(description: String, dailyFlag: Boolean, noSteps: Option[Int], startDate: Option[DateTime], repeatNoDays: Option[Int]): Task = {
+    Task(None, description, owner = "petertang", startDate = startDate.getOrElse(new DateTime()), dailyFlag = dailyFlag, noSteps = noSteps.getOrElse(1), repeatNoDays = repeatNoDays.getOrElse(1))
   }
 
   private def taskToForm(task: Task) = {
@@ -109,11 +112,11 @@ object TasksController extends Controller {
       Tasks.findById(id) match {
         case None => BadRequest
         case Some(task) => {
-            if (step < 1 || step > task.noSteps) BadRequest
-            else {
-              Tasks.updateProgress(id, step)
-              Ok
-            }
+          if (step < 1 || step > task.noSteps) BadRequest
+          else {
+            Tasks.updateProgress(id, step)
+            Ok
+          }
         }
       }
   }
@@ -134,9 +137,9 @@ object TasksController extends Controller {
             Ok(Json.toJson(newTask))
         },
         invalid = {
-          errors => BadRequest(JsError.toFlatJson(errors)) 
+          errors => System.out.println(errors); BadRequest(JsError.toFlatJson(errors))
         })
   }
-  
+
 } 
  

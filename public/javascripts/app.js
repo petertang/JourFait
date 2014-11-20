@@ -3,7 +3,7 @@
     
     app.controller('TaskController', ['$scope', '$http', function($scope, $http) {
         $scope.task = {
-                dailyFlag: false
+                dailyFlag: false,
         };
         $scope.settingsOn = false;
         
@@ -12,8 +12,13 @@
         });
         
         $scope.completeTask = function(index) {
-            $http.put('/tasks/' + $scope.tasks[index].id + '/complete').success(function() {
-                $scope.tasks.splice(index, 1)
+            var taskToDelete = $scope.tasks[index];
+            $scope.tasks.splice(index, 1)
+            $http.put('/tasks/' + taskToDelete.id + '/complete').success(function() {
+              // play sound?  
+            }).error(function() {
+                // TODO: report error and put back task
+                $scope.tasks.push(taskToDelete);
             });
         };
         
@@ -21,8 +26,8 @@
             $http.post('/tasks.json', $scope.task).success(function(data) {
                 $scope.tasks.push(data);
                 $scope.task = { dailyFlag: false };
-            }).error(function() {
-                console.log('Booo...');
+            }).error(function(data) {
+                console.log(data);
             });
         }
         
@@ -30,8 +35,12 @@
             $scope.task.dailyFlag = !$scope.task.dailyFlag;
         }
         
-        $scope.getTaskSteps = function(task) {
-            return new Array(task.noSteps);
+        $scope.getArrayOfSize = function(size) {
+            var array = new Array();
+            for (i = 0; i<size; i++) {
+                array.push(i+1);
+            }
+            return array;
         }
         
         $scope.finishStep = function(index, stepNo) {
@@ -40,12 +49,41 @@
             $http.put('/tasks/' + $scope.tasks[index].id + '/step' + stepNo).success(function() {
                 // play sound?
             }).error(function() {
+                // TODO: report error
                 $scope.tasks[index].stepsCompleted = oldStepsValue;
             });
         }
         
         $scope.toggleSettings = function() {
             $scope.settingsOn = !$scope.settingsOn;
+            if ($scope.settingsOn) {
+                //$scope.task.startDate = new Date();
+            } else {
+                delete $scope.task.startDate;
+            }
         }
     }]);
+    
+    app.controller('UserController', ['$scope', '$http', '$window', function($scope, $http, $window) {
+        $scope.user = {}
+        $scope.register = function() {
+            $http.post('/accounts', $scope.user).success(function(data) {
+                console.log('success');
+                $scope.user = {};
+                $window.location.href="/tasks";
+            }).error(function(data) {
+                console.log('error ');
+                console.log(data);
+                // redisplay register page
+            });
+        }
+        
+        $scope.login = function() {
+            $http.post('/login', $scope.user).success(function(data) {
+               console.log('Login successful'); 
+            }).error(function(data) {
+               console.log('Error logging in');
+            });
+        }
+    }])
 })();
