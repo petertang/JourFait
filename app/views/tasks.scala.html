@@ -3,7 +3,12 @@
 
 @main(Messages("application.name")) {
 <div class="container" ng-controller="TaskController as taskCtrl">
-	<div class="createTaskPanel glass">
+  <div class="row">
+    <div class="col-sm-12" align="right">
+      <a href="/logout" class="btn btn-warning">Logout</a>
+    </div>
+  </div>
+	<div class="createTaskPanel glass" >
 	    <form ng-submit="createTask()" novalidate name="form">
 		<div class="row panel-body">
 			<div class="col-xs-12">
@@ -13,12 +18,14 @@
 			  <label class="sr-only" for="description">Description:</label>
 			  <span class="fill"><input type="text" autofocus placeholder="@Messages("task.input.placeholder")" class="form-control" name="description" ng-model="task.description" required/></span>					
 			</div>
-			<div ng-show="settingsOn" class="form-inline"><div class="col-xs-1"></div>
+			<div ng-show="settingsOn" class="form-inline">
+				<div class="col-xs-1"></div>
 				<div class="col-xs-10 form-group settingsBar" align="center">
 					<label>Repeat every </label> <select ng-model="task.repeatNoDays" ng-options="val for val in getArrayOfSize(7)" class="form-control"></select> days
 					<label>Start Date: </label><input type="date" name="startDate" ng-model="task.startDate" class="form-control"/>
-					<label>Number of steps: </label><input type="number" ng-model="task.noSteps" class="form-control" min="1" max="10"/></div><div class="col-xs-1">
+					<label>Number of steps: </label><input type="number" ng-model="task.noSteps" class="form-control" min="1" max="10"/>
 				</div>
+				<div class="col-xs-1"></div>
 			</div>
 		</div>
 		</form>

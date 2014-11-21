@@ -6,10 +6,10 @@ import play.api.test.Helpers._
 import org.specs2.execute.AsResult
 import org.specs2.execute.Result
 import models.Tables._
-import models.Task
+import models._
 import org.joda.time.DateTime
 import play.api.db.slick.DB
-import scala.slick.driver.H2Driver.simple.Session
+import scala.slick.driver.H2Driver.simple._
 import play.api.libs.json.JsArray
 import org.omg.CosNaming.NamingContextPackage.NotFound
 import play.api.libs.json._
@@ -40,9 +40,10 @@ class ApplicationSpec extends Specification with JsonMatchers {
     def setupData() {
       DB.withSession {
         implicit session: Session =>
-
-          Tasks.add(new Task(description = "TestData1", owner = "nobody", startDate = new DateTime, noSteps = 5))
-          Tasks.add(new Task(description = "TestData2", owner = "somebody", startDate = new DateTime))
+          Accounts += Account("test", "test", "test", "test@test.com")
+          Passwords += ("test", "test")
+          Tasks += new Task(description = "TestData1", owner = "nobody", startDate = new DateTime, noSteps = 5)
+          Tasks += new Task(description = "TestData2", owner = "somebody", startDate = new DateTime)
       }
     }
   }
@@ -226,12 +227,31 @@ class ApplicationSpec extends Specification with JsonMatchers {
 
       status(account) must equalTo(BAD_REQUEST)
     }
-    
+
     "register page" in new InMemoryDBApplication {
       val registerPage = route(FakeRequest(GET, "/register")).get
-      
+
       status(registerPage) must equalTo(OK)
     }
-    
+
+    "login attempt with wrong password" in new WithDbData {
+      val js = toJson(Map(
+        "username" -> toJson("test"),
+        "password" -> toJson("badPassword")))
+      val login = route(FakeRequest(POST, "/login").withJsonBody(js)).get
+
+      status(login) must equalTo(BAD_REQUEST)
+    }
+
+    "login attempt - success" in new WithDbData {
+      val js = toJson(Map(
+        "username" -> toJson("test"),
+        "password" -> toJson("test")))
+      val login = route(FakeRequest(POST, "/login").withJsonBody(js)).get
+
+      status(login) must equalTo(OK)
+      cookies(login).get("com.jourfait.username") must not(equalTo(None))
+    }
+
   }
 }

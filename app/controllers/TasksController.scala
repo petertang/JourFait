@@ -58,9 +58,11 @@ object TasksController extends Controller {
 
   def listJson = DBAction {
     implicit rs =>
-      val tasks = Tasks.findAll
-
-      Ok(Json.toJson(tasks))
+      val username = rs.request.session.get("username")
+      username match {
+        case Some(user) => val tasks = Tasks.findAll(user); Ok(Json.toJson(tasks))
+        case None => Ok(JsNull)
+      }
   }
 
   def show(id: Long) = DBAction {
@@ -130,14 +132,16 @@ object TasksController extends Controller {
   def saveJson = DBAction(parse.json) {
     implicit rs =>
       val json = rs.body
+      val username = rs.request.session.get("username")
       json.validate[Task].fold(
         valid = {
           task =>
-            val newTask = Tasks.add(task)
+            // for now manually update username here
+            val newTask = Tasks.add(task.copy(owner = username.get))
             Ok(Json.toJson(newTask))
         },
         invalid = {
-          errors => System.out.println(errors); BadRequest(JsError.toFlatJson(errors))
+          errors => BadRequest(JsError.toFlatJson(errors))
         })
   }
 

@@ -4,6 +4,7 @@ import models.Account
 import play.api.libs.functional.syntax.functionalCanBuildApplicative
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.JsPath
+import play.api.libs.json.Json._
 import play.api.libs.json.Reads
 import play.api.libs.json.Reads._
 import play.api.libs.json.Reads.StringReads
@@ -38,8 +39,23 @@ object AccountController extends Controller {
             Ok //(Json.toJson(newTask))
         },
         invalid = {
-          errors => System.out.println(errors); BadRequest(JsError.toFlatJson(errors))
+          errors => BadRequest(JsError.toFlatJson(errors))
         })
 
+  }
+  
+  def login = DBAction(parse.json) {
+    implicit rs =>
+      val credentials = rs.body
+      val username = (credentials \ "username").as[String]
+      val password = (credentials \ "password").as[String]
+      if (Accounts.login(username, password)) {
+        Ok.withSession(rs.request.session + ("username" -> username))
+      } else
+        BadRequest
+  }
+  
+  def logout = Action {
+    request => Redirect(routes.Application.index).withNewSession
   }
 }

@@ -81,6 +81,7 @@
         $scope.login = function() {
             $http.post('/login', $scope.user).success(function(data) {
                console.log('Login successful'); 
+               $window.location.href="/tasks";
             }).error(function(data) {
                console.log('Error logging in');
             });
