@@ -17,6 +17,8 @@ PUT		/tasks/:id/step:stepNo		controllers.TasksController.progress(id: Long, step
 POST	/accounts					controllers.AccountController.createAccount
 POST	/login						controllers.AccountController.login
 GET		/logout						controllers.AccountController.logout
+GET		/verifyAccount				controllers.AccountController.verify(account: String, ver_token: String)
+GET		/resendVerificationEmail	controllers.AccountController.resendVerifyEmail
 
 
 # Map static resources from the /public folder to the /assets URL path

@@ -1,6 +1,6 @@
 package controllers
 
-import play.api.mvc.{ Flash, Action, Controller }
+import play.api.mvc.{ Flash, Action, Controller, Request, Result }
 import play.api.data.Form
 import play.api.data.Forms._
 import models.Tables._
@@ -13,8 +13,10 @@ import play.api.libs.json.Reads._
 import play.api.libs.functional.syntax._
 import org.omg.CosNaming.NamingContextPackage.NotFound
 import play.api.libs.json.ConstraintReads
+import play.api.mvc.Security
+import controllers.helpers.Secured
 
-object TasksController extends Controller {
+object TasksController extends Controller with Secured {
 
   private val createTaskForm: Form[Task] = Form(
     mapping(
@@ -44,25 +46,16 @@ object TasksController extends Controller {
   }
 
   def list = Action {
-    Ok(views.html.tasks())
+    implicit request =>
+      Ok(views.html.tasks())
   }
-  /*
-  def list = DBAction {
-    implicit rs =>
-      val tasks = Tasks.findAll
-
-      Ok(views.html.tasks(tasks, createTaskForm))
-  }
-  * 
-  */
 
   def listJson = DBAction {
     implicit rs =>
-      val username = rs.request.session.get("username")
-      username match {
-        case Some(user) => val tasks = Tasks.findAll(user); Ok(Json.toJson(tasks))
-        case None => Ok(JsNull)
-      }
+      rs.request.session.get("username").fold[Result](Unauthorized)(username => {
+          val tasks = Tasks.findAll(username) 
+          Ok(Json.toJson(tasks))
+      })
   }
 
   def show(id: Long) = DBAction {
@@ -130,19 +123,20 @@ object TasksController extends Controller {
   }
 
   def saveJson = DBAction(parse.json) {
+    // TODO: Create trait/function to allow for "Authorized" decorator    
     implicit rs =>
       val json = rs.body
-      val username = rs.request.session.get("username")
-      json.validate[Task].fold(
-        valid = {
-          task =>
-            // for now manually update username here
-            val newTask = Tasks.add(task.copy(owner = username.get))
-            Ok(Json.toJson(newTask))
-        },
-        invalid = {
-          errors => BadRequest(JsError.toFlatJson(errors))
-        })
+      rs.request.session.get("username").fold[Result](Unauthorized)(username =>
+        json.validate[Task].fold(
+          valid = {
+            task =>
+              // for now manually update username here
+              val newTask = Tasks.add(task.copy(owner = username))
+              Ok(Json.toJson(newTask))
+          },
+          invalid = {
+            errors => BadRequest(JsError.toFlatJson(errors))
+          }))
   }
 
 } 

@@ -1,15 +1,20 @@
 (function() {
-    var app = angular.module('app', []);
+    var app = angular.module('app', ['ngCookies']);
     
-    app.controller('TaskController', ['$scope', '$http', function($scope, $http) {
+    app.controller('TaskController', ['$scope', '$http', '$cookies', function($scope, $http, $cookies) {
         $scope.task = {
                 dailyFlag: false,
         };
         $scope.settingsOn = false;
+        $scope.verified = ($cookies.verified === 'true')
         
         $http.get('/tasks.json').success(function(data) {
             $scope.tasks = data;
         });
+        
+        $scope.resendVerificationEmail = function() {
+            $http.get('/resendVerificationEmail')
+        }
         
         $scope.completeTask = function(index) {
             var taskToDelete = $scope.tasks[index];
@@ -48,6 +53,9 @@
             $scope.tasks[index].stepsCompleted = stepNo;
             $http.put('/tasks/' + $scope.tasks[index].id + '/step' + stepNo).success(function() {
                 // play sound?
+                if (stepNo == $scope.tasks[index].noSteps) {
+                    $scope.tasks.splice(index, 1);
+                }
             }).error(function() {
                 // TODO: report error
                 $scope.tasks[index].stepsCompleted = oldStepsValue;

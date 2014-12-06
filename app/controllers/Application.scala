@@ -7,7 +7,10 @@ object Application extends Controller {
 
   def index = Action {
     implicit request =>
-      Ok(views.html.index())
+      request.session.get("username") match {
+        case Some(_) => Redirect(routes.TasksController.list)
+        case None => Ok(views.html.index())
+      }
   }
 
   def register = Action {
