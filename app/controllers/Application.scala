@@ -7,11 +7,14 @@ object Application extends Controller {
 
   def index = Action {
     implicit request =>
-      Ok(views.html.index("Your new application is ready, Peter."))
+      request.session.get("username") match {
+        case Some(_) => Redirect(routes.TasksController.list)
+        case None => Ok(views.html.index())
+      }
   }
 
-  def hello(name: String = "Peter") = Action {
+  def register = Action {
     implicit request =>
-      Ok(views.html.index("Hello: " + name))
+      Ok(views.html.register())
   }
 }

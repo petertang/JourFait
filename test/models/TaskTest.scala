@@ -29,14 +29,14 @@ class TaskTest extends FlatSpec with BeforeAndAfter {
 
   "A task" should "return 0 elements" in {
     createSchema()
-    val tasks = Tables.Tasks.findAll
+    val tasks = Tables.Tasks.findAll("Petertang")
     assert(0 == tasks.size)
   }
 
   it should "increase in size after an add" in {
     createSchema()
     Tables.Tasks.add(Task(Some(999L), description = "Peter", owner = "petertang", startDate = new DateTime()))
-    val tasks = Tables.Tasks.findAll
+    val tasks = Tables.Tasks.findAll("petertang")
     assert(1 == tasks.size)
   }
 
