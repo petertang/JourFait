@@ -13,6 +13,7 @@ body {
 }
 
 .createTaskPanel {
+	background-color: rgba(255, 255, 255, 0.85);
 	border: 0.5px solid;
 	border-radius: 4px;
 	padding: 2px;
@@ -20,14 +21,15 @@ body {
 }
 
 .taskItem {
+	background-color: rgba(255, 255, 255, 0.85);
 	border: 0.5px solid;
 	border-radius: 4px;
 	padding: 8px;
-	margin: 5px;
+	margin: 5px;	
 }
 
 .float-right {
-	float: right;
+	float: right;	
 }
 
 .fill {
@@ -39,25 +41,3 @@ body {
 	height: 100%;
 	display: block;
 }
-
-.faded {
-	opacity: 0.4;
-	filter: alpha(opacity = 40);
-}
-
-div .settingsBar {
-	background-color: rgba(0, 0, 0, 0.15);
-	border-radius: 0px 0px 7px 7px;
-	margin-top: -3px;
-	padding: 5px;	
-	border: 1px;
-}
-
-.glass {
-	background-color: rgba(255, 255, 255, 0.85);
-}
-
-#loginPanel {
-	margin-top: 100px;
-}
-

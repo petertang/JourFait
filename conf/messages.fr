@@ -1,8 +1,3 @@
 application.name = JourFait
 all.tasks = Tout les tâches
 task.input.placeholder = Mettez une nouvelle tâche
-logged.in.as = connecté sous
-verification.email.subject = Jourfait Inscription Verification E-mail
-verification.email.body = S''il-vous-plait verifiez votre compte et email en cliquant ce lien: {0}
-verification.warning = Votre compte est toujours pas verifié et expira dans 72 heures de l''heure de registration. Suivez les directions dans notre email de registration pour verifier votre compte. Cliquez {0} pour renvoyer le e-mail.
-link.here = ici

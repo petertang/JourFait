@@ -1,64 +1,29 @@
-@()(implicit lang: Lang, request: play.api.mvc.RequestHeader) 
+@(tasks: List[Task], taskForm: Form[Task])(implicit lang: Lang) 
 @import helpers.BlankInputHelper._ 
 
 @main(Messages("application.name")) {
 <div class="container" ng-controller="TaskController as taskCtrl">
-	<div class="col-sm-2"></div>
-	<div class="col-sm-8" ng-hide="verified">
-		<div class="panel panel-warning" align="center">
-			<div class="panel-heading">@Html(Messages("verification.warning", "<a ng-click=\"resendVerificationEmail()\">" + Messages("link.here") + "</a>"))</div>
-		</div>
-	</div>
-	<div class="col-sm-2"></div>
-	<div class="row">
-		<div class="col-sm-12" align="right">
-			<span class="btn btn-default">@Messages("logged.in.as") <strong>@request.session.get("username")</strong></span>
-			<a href="/logout" class="btn btn-warning">Logout</a>
-		</div>
-	</div>
-	<div class="createTaskPanel glass">
-		<form ng-submit="createTask()" novalidate name="form">
-			<div class="row panel-body">
-				<div class="col-xs-12">
-					<button type="submit" class="float-right btn btn-default"
-						ng-disabled="form.$invalid">+</button>
-					<span class="float-right"><a href="#"
-						ng-click="toggleDaily()"><img src="@routes.Assets.at("images/monday.svg")" height="38"
-							ng-class="{faded: !task.dailyFlag}" /></a></span> <span class="float-right"><a
-						href="#" ng-click="toggleSettings()"><img
-							src="@routes.Assets.at("images/settings21.svg")" height="33" /></a></span>
-					<label class="sr-only" for="description">Description:</label> <span
-						class="fill"><input type="text" autofocus
-						placeholder="@Messages("task.input.placeholder")" class="form-control" name="description"
-						ng-model="task.description" required /></span>
-				</div>
-				<div ng-show="settingsOn" class="form-inline">
-					<div class="col-xs-1"></div>
-					<div class="col-xs-10 form-group settingsBar" align="center">
-						<label>Repeat every </label> <select ng-model="task.repeatNoDays"
-							ng-options="val for val in getArrayOfSize(7)"
-							class="form-control"></select> days <label>Start Date: </label><input
-							type="date" name="startDate" ng-model="task.startDate"
-							class="form-control" /> <label>Number of steps: </label><input
-							type="number" ng-model="task.noSteps" class="form-control"
-							min="1" max="10" />
-					</div>
-					<div class="col-xs-1"></div>
-				</div>
+	<div class="createTaskPanel">
+	    <form ng-submit="createTask()">
+		<div class="row panel-body">
+			<div class="col-xs-12">
+		      <button type="submit" class="float-right btn btn-default">+</button>
+			  @helper.checkbox(taskForm("dailyFlag"), 'class -> "float-right")
+			  <label class="sr-only" for="description">Description:</label>
+			  <span class="fill"><input type="text" placeholder="@Messages("task.input.placeholder")" class="form-control" name="description" ng-model="task.description"/></span>					
 			</div>
+		</div>
 		</form>
 	</div>
-	{{date}}
 	<div class="row">
 		<div class="col-xs-12">
 			<h2>@Messages("all.tasks")</h2>
 			<ul class="list-unstyled">
-				<li ng-repeat="task in tasks" class="taskItem glass"><input
-					type="checkbox" ng-click="completeTask($index)" />
-					{{task.description}} <span ng-show="task.noSteps> 1"
-					ng-repeat="i in getArrayOfSize(task.noSteps) track by $index"><input
-						type="checkbox" ng-click="finishStep($parent.$index, $index + 1)"
-						ng-checked="$index < task.stepsCompleted" /></span></li>
+				<li ng-repeat="task in tasks" class="taskItem">
+					<input type="checkbox" ng-click="completeTask($index)" />
+					{{task.description}}
+					<input type="checkbox"/>
+				</li>
 			</ul>
 		</div>
 	</div>

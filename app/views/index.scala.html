@@ -1,33 +1,7 @@
-@()(implicit lang: Lang) 
+@(message: String)
 
 @main(Messages("application.name")) {
-<div class="container" ng-controller="UserController">
-	<div class="col-md-6 col-md-offset-3">
-		<div class="panel panel-default glass" id="loginPanel">
-			<div class="panel-heading">Login</div>
-			<div class="panel-body">
-				<form role="form" class="form-horizontal" ng-submit="login()">
-					<div class="form-group">
-						<label for="username" class="col-sm-2 control-label">Username:</label>
-						<div class="col-sm-10">
-							<input type="text" name="username" class="form-control" ng-model="user.username" />
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="password" class="col-sm-2 control-label">Password:</label>
-						<div class="col-sm-10">
-							<input type="password" name="password" class="form-control" ng-model="user.password" />
-						</div>
-					</div>
-					<div class="form-group">
-						<div class="col-sm-12">
-						  <input type="submit" class="form-control btn btn-primary" value="Login" />
-						</div>
-					</div>
-					<div id="nonMemberDiv" align="right">Not a member? <strong><a href="@routes.Application.register">Signup now</a></strong></div>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
+
+    @play20.welcome(message)
+
 }
